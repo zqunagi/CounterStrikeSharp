@@ -62,7 +62,11 @@ int GetDynCallConvention(Convention_t eConv)
 #ifdef _WIN32
             return DC_CALL_C_X86_WIN32_THIS_MS;
 #else
+#if defined(__x86_64__) || defined(_M_X64)
+            return DC_CALL_C_DEFAULT;
+#else
             return DC_CALL_C_X86_WIN32_THIS_GNU;
+#endif
 #endif
 #ifdef _WIN32
         case CONV_STDCALL:
@@ -117,6 +121,15 @@ void ValveFunction::Call(ScriptContext& script_context, int offset)
 
     dcReset(g_pCallVM);
     dcMode(g_pCallVM, m_iCallingConvention);
+
+    // On Linux x86_64 (System V), pseudo-thiscall typically passes 'this' as the first argument.
+    // If this function was created as THISCALL and we have a stored this pointer, push it first.
+#ifndef _WIN32
+    if (m_eCallingConvention == CONV_THISCALL && m_thisPtr != nullptr)
+    {
+        dcArgPointer(g_pCallVM, m_thisPtr);
+    }
+#endif
 
     for (size_t i = 0; i < m_Args.size(); i++)
     {

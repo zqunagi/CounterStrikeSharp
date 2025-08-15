@@ -89,6 +89,7 @@ ValveFunction* CreateVirtualFunction(ScriptContext& script_context)
 
     auto function = new ValveFunction(function_addr, CONV_THISCALL, args, return_type);
     function->SetOffset(vtable_offset);
+    function->SetThisPtr(ptr);
 
     m_managed_ptrs.push_back(function);
     return function;

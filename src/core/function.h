@@ -92,6 +92,7 @@ class ValveFunction
 
     void SetOffset(int offset) { m_offset = offset; }
     void SetSignature(const char* signature) { m_signature = signature; }
+    void SetThisPtr(void* thisPtr) { m_thisPtr = thisPtr; }
 
     void Call(ScriptContext& args, int offset = 0);
     void AddHook(CallbackT callable, bool post);
@@ -111,6 +112,7 @@ class ValveFunction
     const char* m_signature;
     ScriptCallback* m_precallback = nullptr;
     ScriptCallback* m_postcallback = nullptr;
+    void* m_thisPtr = nullptr;
 };
 
 } // namespace counterstrikesharp
